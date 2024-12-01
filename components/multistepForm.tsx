@@ -1,28 +1,28 @@
-'use client'
+'use client';
 import { useState } from 'react';
-import { FormProvider, useForm, SubmitHandler, FieldValues, Controller } from 'react-hook-form';
+import { FormProvider, useForm, SubmitHandler, FieldValues } from 'react-hook-form';
 import PersonalInformation from './personalInformation';
 import AddressInformation from './addressInformation';
-import DocumentUpload from './documentUpload';
+// import DocumentUpload from './documentUpload';
 import Review from './review';
 
 const steps = [
   { name: 'Personal Information', component: PersonalInformation },
   { name: 'Address Information', component: AddressInformation },
-  { name: 'Document Upload', component: DocumentUpload },
+  // { name: 'Document Upload', component: DocumentUpload },
   { name: 'Review', component: Review },
 ];
 
 const MultiStepForm = () => {
   const [currentStep, setCurrentStep] = useState(0);
   const methods = useForm({ mode: 'onBlur' });
-  const { handleSubmit, formState: { errors, isValid }, trigger } = methods;
+  const { handleSubmit, trigger } = methods;
 
   const progress = ((currentStep + 1) / steps.length) * 100;
   const StepComponent = steps[currentStep].component;
 
   const nextStep = async () => {
-    const isStepValid = await trigger(); // Trigger validation for current step
+    const isStepValid = await trigger(); // Validate current step
     if (isStepValid) {
       setCurrentStep((prev) => prev + 1);
     }
@@ -30,8 +30,18 @@ const MultiStepForm = () => {
 
   const prevStep = () => setCurrentStep((prev) => prev - 1);
 
-  const onSubmit: SubmitHandler<FieldValues> = (data) => {
-    console.log('Form submitted', data);
+  const onSubmit: SubmitHandler<FieldValues> = async (data) => {
+    const response = await fetch('/api/submit-form', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(data),
+    });
+  
+    if (response.ok) {
+      alert('Form submitted successfully!');
+    } else {
+      alert('Submission failed');
+    }
   };
 
   return (
@@ -45,8 +55,8 @@ const MultiStepForm = () => {
           <span className="text-xl font-semibold">{Math.round(progress)}%</span>
         </div>
 
-        {/* Pass errors to the StepComponent */}
-        <StepComponent errors={errors} /> 
+        {/* Pass current errors to the StepComponent */}
+        <StepComponent /> 
 
         <div className="flex justify-between mt-4">
           {currentStep > 0 && (
@@ -64,7 +74,6 @@ const MultiStepForm = () => {
               type="button"
               onClick={nextStep}
               className="px-4 py-2 bg-blue-500 text-white rounded-md"
-              disabled={!isValid} 
             >
               Next
             </button>
@@ -73,7 +82,7 @@ const MultiStepForm = () => {
               type="submit"
               className="px-4 py-2 bg-green-500 text-white rounded-md"
             >
-              Submit
+              Submit information
             </button>
           )}
         </div>

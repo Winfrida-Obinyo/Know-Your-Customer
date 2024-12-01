@@ -1,7 +1,21 @@
 import { useFormContext } from 'react-hook-form';
+import { useState } from 'react';
 
 const DocumentUpload = () => {
-  const { register, formState: { errors } } = useFormContext();
+  const { register, formState: { errors }, setValue, trigger } = useFormContext();
+  const [fileName, setFileName] = useState<string | null>(null);
+
+  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (file) {
+      setValue('idUpload', file);  // Set the file object in form context
+      setFileName(file.name);      // Update local state to show file name
+      trigger('idUpload');          // Validate the field immediately
+    } else {
+      setValue('idUpload', null);   // Ensure value is cleared if no file
+      setFileName(null);
+    }
+  };
 
   return (
     <div className="space-y-6">
@@ -19,21 +33,25 @@ const DocumentUpload = () => {
             <span>Choose a file</span>
             <input
               id="idUpload"
-              {...register('idUpload', { required: 'ID upload is required' })}
               type="file"
               className="hidden"
+              {...register('idUpload', {
+                required: 'ID upload is required',
+                validate: (value) => value instanceof File || 'Please upload a valid file.',
+              })}
+              onChange={handleFileChange}
             />
           </label>
           
           {/* Display file name if a file is selected */}
           <span className="text-gray-500">
-            {errors.idUpload ? 'No file selected' : 'No file uploaded yet'}
+            {fileName || 'No file uploaded yet'}
           </span>
         </div>
 
         {/* Error Message */}
         {errors.idUpload && (
-          <span className="text-red-500 text-sm mt-2">{String(errors.idUpload.message)}</span>
+          <span className="text-red-500 text-sm mt-2">{errors.idUpload.message as string}</span>
         )}
       </div>
     </div>

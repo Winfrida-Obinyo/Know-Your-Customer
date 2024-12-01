@@ -8,8 +8,6 @@ export default function Footer() {
         <div className="text-center">
           <h4 className="text-xl font-semibold">Dev Winfrida</h4>
           <p className="mt-1 text-sm">Passionate Software Engineer delivering creative solutions for the web.</p>
-          <p className="mt-1 text-sm">📞 +254 707 656 834</p>
-          <p className="mt-1 text-sm">✉️ obinyowinfridaa@gmail.com</p>
         </div>
 
         <div className="flex justify-center space-x-6 mt-4">
