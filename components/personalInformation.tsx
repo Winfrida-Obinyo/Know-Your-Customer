@@ -1,5 +1,5 @@
 import { useFormContext } from 'react-hook-form';
-import { FaUser, FaBirthdayCake, FaEnvelope, FaPhoneAlt, FaTransgender } from 'react-icons/fa'; // Importing icons from react-icons
+import { FaUser, FaBirthdayCake, FaEnvelope, FaPhoneAlt } from 'react-icons/fa'; // Importing icons from react-icons
 
 const PersonalInformation = () => {
   const { register, formState: { errors } } = useFormContext();
